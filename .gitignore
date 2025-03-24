@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#CMake files
+CMakeFiles
+*.CMakeFiles
+*.cmake
+CMakeCache.txt
+Makefile
+
+osm_split/osm_split
