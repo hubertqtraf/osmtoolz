@@ -171,26 +171,6 @@ int main(int argc, char ** argv)
 	zblock_close(&z);
 	zblock_del(&z);
 
-	// TODO: remove? -> readNodes -> osm_store_node_coor.c
-	if((source_version.version == 6) && (source_version.n_64_flags == 1))
-	{
-		printf("additional step: add coordinates to node ids\n");
-
-		zblock_new(&z, ZB_READ); //| ZB_USE_R_THREAD);
-
-		if(zblock_rd_open(&z, "./result/node_20.osm.gz"))
-		{
-			printf("error opening gz-file\n");
-			zblock_del(&z);
-			return -1;
-		}
-
-		readNodes(&z, &act_world);
-
-		zblock_close(&z);
-		zblock_del(&z);
-	}
-
 	char t_buffer[100];
 	cmd_time(t1, t_buffer);
 	//printf("%s\n", t_buffer);
