@@ -69,8 +69,9 @@ int read_param(StdParam * param, int argc, char ** argv)
 
 	if(select_out && (param->flags & PARM_OUT) && (argc > select_out))
 	{
-		param->out_fname = (char *)malloc(strlen(argv[select_out]) + 100);
-		sprintf(param->out_fname, "%s.osminfo.gz", argv[select_out]);
+		setOutput(param, argv[select_out]);
+		//param->out_fname = (char *)malloc(strlen(argv[select_out]) + 100);
+		//sprintf(param->out_fname, "%s.osminfo.gz", argv[select_out]);
 	}
 
 	if(select_accept && (param->flags & PARM_ACC) && (argc > select_accept))
@@ -90,11 +91,34 @@ int read_param(StdParam * param, int argc, char ** argv)
 	return 0;
 }
 
+void setOutput(StdParam * param, char * name)
+{
+	if(name == NULL)
+	{
+		return;
+	}
+	param->info_fname = (char *)malloc(strlen(name) + 100);
+	sprintf(param->info_fname, "%s.osminfo.gz", name);
+	param->out_fname = (char *)malloc(strlen(name) + 100);
+	sprintf(param->out_fname, "%s", name);
+}
+
 void free_param(StdParam * param)
 {
+	if(param->info_fname != NULL)
+	{
+		free(param->info_fname);
+		param->info_fname = NULL;
+	}
 	if(param->out_fname != NULL)
+	{
 		free(param->out_fname);
+		param->out_fname = NULL;
+	}
 	if(param->in_fname != NULL)
-		free(param->out_fname);
+	{
+		free(param->in_fname);
+		param->in_fname = NULL;
+	}
 }
 

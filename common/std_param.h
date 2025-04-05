@@ -55,11 +55,13 @@ typedef struct
 	uint8_t val_thread;
 	uint8_t val_accept;
 	uint8_t val_mode;
+	char * info_fname;
 	char * in_fname;
 	char * out_fname;
 }StdParam;
 
 int read_param(StdParam * param, int argc, char ** argv);
+void setOutput(StdParam * param, char * name);
 void free_param(StdParam * param);
 
 #endif

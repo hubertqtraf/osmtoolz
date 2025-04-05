@@ -1,8 +1,6 @@
 /******************************************************************
  * project:     Trafalgar/OSM-Toolz
  *
- * class:       ---
- * superclass:  ---
  * modul:       osm_split.c
  *
  * system:      UNIX/LINUX

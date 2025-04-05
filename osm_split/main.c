@@ -1,8 +1,6 @@
 /******************************************************************
  * project:     Trafalgar/OSM-Toolz
  *
- * class:       ---
- * superclass:  ---
  * modul:       main.c
  *
  * system:      UNIX/LINUX
@@ -34,6 +32,7 @@
 #include "../common/cmd_func.h"
 #include "../common/zblock_io.h"
 #include "../common/read_version.h"
+#include "../common/std_param.h"
 #include "osm_split.h"
 
 #include <stdio.h>
@@ -43,59 +42,41 @@
 
 int main(int argc, char ** argv)
 {
-	z_block z;
-	time_t t1;
+	StdParam std_param;
 
 	if(argc < 3)
 	{
 		printf("usage: osm_split -f <xxx.osm.gz> [-o <output>] [-t 1] [-a 1]\n");
 		exit(-1);
 	}
+	memset(&std_param, 0x00, sizeof(StdParam));
+	std_param.flags = PARM_FILE | PARM_OUT | PARM_ACC | PARM_TR;
+	read_param(&std_param, argc, argv);
 
-	int select_file   = cmd_args(argc, argv, "-f");
-	int select_thread = cmd_args(argc, argv, "-t");
-	int select_out    = cmd_args(argc, argv, "-o");
-	int select_accept = cmd_args(argc, argv, "-a");
-
-	if(!select_file)
-	{
-		printf("parameter error: input file not defined\n");
-		exit(-1);
-	}
-
-	if(select_out)
-	{
-		printf("using input [%s] and output [%s]\n",
-			argv[select_file], argv[select_out]);
-	}
-	else
-	{
-		printf("using input [%s] \n", argv[select_file]);
-	}
-
-	// TODO
-	printf("use thread option: %i\n", select_thread);
-	printf("use accept option: %i\n", select_accept);
-
-	uint8_t p_n = 0;
-
-	/*if(argc == 3)
-	{
-		if(strlen(argv[2]) == 2)
-			if((argv[2][0] == '-') && (argv[2][1] == 'n'))
-				p_n = 0x01;
-	}*/
-
+	time_t t1;
 	time(&t1);
+	uint8_t p_n = 0;	// ?????
 
 	Version_t source_version;
+	if(std_param.in_fname == NULL)
+	{
+		printf("parameter error: input file not defined\n");
+                	exit(-1);
+	}
+	if(std_param.out_fname == NULL)
+	{
+		setOutput(&std_param, "undefined");
+		printf("parameter error: output not defined, set default\n");
+	}
 
-	if(getVersion(argv[select_file], &source_version, select_accept) == (-1))
+	printf("IN  [%s]\n", std_param.in_fname);
+	printf("OUT [%s]\n", std_param.out_fname);
+
+	if(getVersion(std_param.in_fname, &source_version, std_param.val_accept) == (-1))
 	{
 		printf("error opening gz-file [%s]\n",argv[1]);
 		return -1;
 	}
-
 	printf("[%s]\n",source_version.source);
 
 	source_version.n_64_flags = p_n;
@@ -111,17 +92,13 @@ int main(int argc, char ** argv)
 
 	//------------------------------------------------------------------
 
+	z_block z;
 	World_t act_world;
 	memset(&act_world, 0x00, sizeof(World_t));
 
-	if(select_accept)
-		act_world.accept = 1;
-
-	//zblock_new(&z,4,0);
+	act_world.accept = std_param.val_accept;
 	zblock_new(&z, ZB_READ); //| ZB_USE_R_THREAD);
-	zblock_rd_open(&z,argv[select_file]);
-
-	//exit(0);
+	zblock_rd_open(&z, std_param.in_fname); //argv[select_file]);
 
 	switch(source_version.version)
 	{
@@ -134,16 +111,7 @@ int main(int argc, char ** argv)
 
 	case 5:
 	case 6:
-		if(select_out)
-		{
-			printf("using '-o' option\n");
-			countNodesOut(&z, &act_world, argv[select_out], ZB_WRITE | ZB_USE_W_THREAD);
-		}
-		else
-		{
-			system("rm ./result/*.gz");
-			countNodes(&z, &act_world, p_n, ZB_WRITE | ZB_USE_W_THREAD);
-		}
+		countNodesOut(&z, &act_world, std_param.out_fname, ZB_WRITE | ZB_USE_W_THREAD);
 		break;
 
 	default:
@@ -158,15 +126,7 @@ int main(int argc, char ** argv)
 	printf("split done, nodes: min %ld, max %ld\n",
 		act_world.info.node.min_id, act_world.info.node.max_id);
 
-	if(select_out)
-	{
-		char * fname = (char *)malloc(strlen(argv[select_out]) + 100);
-		sprintf(fname, "%s.osminfo.gz", argv[select_out]);
-		writeOsmInfo(&(act_world.info), fname, &source_version);
-		free(fname);
-	}
-	else
-		writeOsmInfo(&(act_world.info), "./result/info_20.osm.gz", &source_version);
+	writeOsmInfo(&(act_world.info), std_param.info_fname, &source_version);
 
 	zblock_close(&z);
 	zblock_del(&z);
@@ -176,6 +136,8 @@ int main(int argc, char ** argv)
 	//printf("%s\n", t_buffer);
 
 	cleanVersion(&source_version);
+	free_param(&std_param);
+	printf("\ndone\n");
 
 	return 0;
 }
