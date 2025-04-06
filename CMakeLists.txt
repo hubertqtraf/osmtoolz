@@ -16,7 +16,7 @@ endif()
 # endif()
 
 #add_subdirectory (osm_cut)
-#add_subdirectory (osm_nodes)
 #add_subdirectory (osm_ways)
 add_subdirectory (osm_split)
+add_subdirectory (osm_huge)
 

@@ -47,6 +47,13 @@
 #define PARM_MODE 0x00000010
 #define PARM_TR   0x00000100
 
+#define F_INFO    1
+#define F_NODE    2
+#define F_WAY	  3
+#define F_REL     4
+
+#define DIR_IN    0
+#define DIR_OUT   1
 
 typedef struct
 {
@@ -55,13 +62,14 @@ typedef struct
 	uint8_t val_thread;
 	uint8_t val_accept;
 	uint8_t val_mode;
-	char * info_fname;
 	char * in_fname;
 	char * out_fname;
+	char * buff;
 }StdParam;
 
 int read_param(StdParam * param, int argc, char ** argv);
-void setOutput(StdParam * param, char * name);
+void set_output(StdParam * param, char * name);
+char * get_fname(StdParam * param, int dir, int mode);
 void free_param(StdParam * param);
 
 #endif

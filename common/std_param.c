@@ -69,7 +69,7 @@ int read_param(StdParam * param, int argc, char ** argv)
 
 	if(select_out && (param->flags & PARM_OUT) && (argc > select_out))
 	{
-		setOutput(param, argv[select_out]);
+		set_output(param, argv[select_out]);
 		//param->out_fname = (char *)malloc(strlen(argv[select_out]) + 100);
 		//sprintf(param->out_fname, "%s.osminfo.gz", argv[select_out]);
 	}
@@ -91,25 +91,55 @@ int read_param(StdParam * param, int argc, char ** argv)
 	return 0;
 }
 
-void setOutput(StdParam * param, char * name)
+void set_output(StdParam * param, char * name)
 {
 	if(name == NULL)
 	{
 		return;
 	}
-	param->info_fname = (char *)malloc(strlen(name) + 100);
-	sprintf(param->info_fname, "%s.osminfo.gz", name);
 	param->out_fname = (char *)malloc(strlen(name) + 100);
 	sprintf(param->out_fname, "%s", name);
 }
 
+char * get_fname(StdParam * param, int dir, int mode)
+{
+	char * base = NULL;
+
+	if(param->buff != NULL)
+	{
+		free(param->buff);
+		param->buff = NULL;
+	}
+	if(dir)
+		base = param->out_fname;
+	else
+		base = param->in_fname;
+	if(base == NULL)
+		return NULL;
+
+	param->buff = (char *)malloc(strlen(base) + 100);
+	switch(mode)
+	{
+	case F_INFO:
+		sprintf(param->buff, "%s.osminfo.gz", base);
+		break;
+	case F_NODE:
+		sprintf(param->buff, "%s_node_20.osm.gz", base);
+		break;
+	case F_WAY:
+		sprintf(param->buff, "%s_way_20.osm.gz", base);
+		break;
+	case F_REL:
+		sprintf(param->buff, "%s_rel_20.osm.gz", base);
+		break;
+	default:
+		return NULL;
+	}
+	return param->buff;
+}
+
 void free_param(StdParam * param)
 {
-	if(param->info_fname != NULL)
-	{
-		free(param->info_fname);
-		param->info_fname = NULL;
-	}
 	if(param->out_fname != NULL)
 	{
 		free(param->out_fname);
@@ -119,6 +149,11 @@ void free_param(StdParam * param)
 	{
 		free(param->in_fname);
 		param->in_fname = NULL;
+	}
+	if(param->buff != NULL)
+	{
+		free(param->buff);
+		param->buff = NULL;
 	}
 }
 
