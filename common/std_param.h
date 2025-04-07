@@ -58,7 +58,7 @@
 typedef struct
 {
 	uint32_t flags;
-	uint32_t rect[4];
+	int32_t rect[4];
 	uint8_t val_thread;
 	uint8_t val_accept;
 	uint8_t val_mode;

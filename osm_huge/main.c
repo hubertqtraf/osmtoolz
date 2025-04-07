@@ -33,7 +33,7 @@
 #include "../common/zblock_io.h"
 #include "../common/read_version.h"
 #include "../common/std_param.h"
-/*#include "osm_huge.h"*/
+#include "osm_huge.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -43,14 +43,16 @@
 int main(int argc, char ** argv)
 {
 	StdParam std_param;
+	World_t act_world_;
 
 	if(argc < 3)
 	{
 		printf("usage: osm_huge -f <xxx.osm.gz> [-o <output>] [-m 1] [-t 1] [-a 1]\n");
 		exit(-1);
 	}
+	memset(&act_world_, 0x00, sizeof(World_t));
 	memset(&std_param, 0x00, sizeof(StdParam));
-	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_ACC | PARM_TR;
+	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_MODE | PARM_ACC | PARM_TR;
 	read_param(&std_param, argc, argv);
 
 	time_t t1;
@@ -58,6 +60,8 @@ int main(int argc, char ** argv)
 	uint8_t p_n = 0;	// ?????
 
 	Version_t source_version;
+	memset(&source_version, 0x00, sizeof(Version_t));
+	
 	char * fname = get_fname(&std_param, DIR_IN, F_INFO);
 	if(fname == NULL)
 	{
@@ -69,6 +73,15 @@ int main(int argc, char ** argv)
 		set_output(&std_param, "undefined");
 		printf("parameter error: output not defined, set default\n");
 	}
+	printf("rect: %i %i %i %i\n", std_param.rect[0], std_param.rect[1], std_param.rect[2], std_param.rect[3]);
+	addBox(&source_version.box, std_param.rect);
+	initOsmInfo(&(act_world_.info));
+	if(readOsmInfo(&(act_world_.info), fname, &source_version, 0))
+	{
+		printf("error '%s'\n", fname);
+		return -1;
+	}
+
 
 	printf("IN  [%s]\n", fname);
 	printf("OUT [%s]\n", std_param.out_fname);
@@ -91,15 +104,66 @@ int main(int argc, char ** argv)
 	printf("version: 0.%i; store coordinates in id: %i \n",
 		source_version.version, p_n);
 
+	//Version_t source_version;
+	//memset(&source_version, 0x00, sizeof(Version_t));
+	//addBox(&source_version.box, std_param.rect);
+
 	//------------------------------------------------------------------
 
-	fname = get_fname(&std_param, DIR_OUT, F_INFO);
+	z_block z_;
 
+	fname = get_fname(&std_param, DIR_IN, F_NODE);
+	printf("open #1: %s\n", fname);
+	if(fname == NULL)
+	{
+		printf("error name == NULL\n");
+		return -1;
+	}
+	zblock_new(&z_, ZB_READ);
+	if(zblock_rd_open(&z_, fname))
+	{
+		printf("error opening gz-file\n");
+		zblock_del(&z_);
+		// TODO: cleanup
+		return -1;
+	}
+
+	if(!std_param.val_mode)
+		std_param.val_mode = 1;
+	setMode(&act_world_, std_param.val_mode);
+	int ret = readNodes(&z_, &act_world_, std_param.rect);
+
+	printf(", done (ret = %i)\n", ret);
+
+	zblock_close(&z_);
+
+	printf("open #2: %s\n", fname);
+	if(zblock_rd_open(&z_, fname))
+        {
+                printf("error opening gz-file\n");
+                zblock_del(&z_);
+                //free(act_world_.in_path);
+                return -1;
+        }
+
+	fname = get_fname(&std_param, DIR_OUT, F_NODE);
+        //get_out_fname(&act_world_.out_path, select_out, out_file, "_node_20.osm.gz");
+
+        printf("open writeNodes %s ", fname);
+        ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, fname);
+
+        zblock_close(&z_);
+
+        printf(" done (ret = %i)\n", ret);
+
+
+	fname = get_fname(&std_param, DIR_OUT, F_INFO);
 	if(fname != NULL)
 	{
-		printf("OUT: %s\n", fname);
-		//writeOsmInfo(&(act_world.info), fname, &source_version);
+		printf("INFO OUT: %s\n", fname);
+		writeOsmInfo(&(act_world_.info), fname, &source_version);
 	}
+
 
 	//zblock_close(&z);
 	//zblock_del(&z);
