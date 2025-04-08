@@ -170,11 +170,11 @@ int main(int argc, char ** argv)
 
 	char t_buffer[100];
 	cmd_time(t1, t_buffer);
-	printf("%s\n", t_buffer);
+	printf("\n%s", t_buffer);
 
 	cleanVersion(&source_version);
 	free_param(&std_param);
-	printf("\ndone\n");
+	printf("... done\n");
 
 	return 0;
 }

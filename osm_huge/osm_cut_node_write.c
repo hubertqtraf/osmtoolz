@@ -55,36 +55,41 @@ void init_write_world_node(World_t * w_ref)
 	w_ref->next_id = 0;
 }
 
-void getNextNode(World_t * w_ref)
+int inline checkNodeFlag(World_t * world)
 {
-	w_ref->next_id++;
+	// TODO: add mode '5'
+	switch(world->node_flags_size)
+	{
+	case 1:
+		if((world->node_flags[world->act_idx] & 0x01) == 0x01)
+		{
+			//printf(".");
+			return 1;
+		}
+		break;
+	case 5:
+		printf("TODO!\n");
+		break;
+	default:
+		printf("unknown value: %i\n", world->node_flags_size);
+		break;
+	}
+	return 0;
 }
 
+void inline closeNodeTag(World_t * world, char * end, int size)
+{
+	if(checkNodeFlag(world))
+	{
+		zblock_wr_append(&world->zw_node, end, size);
+	}
+	world->type_flags = 0;
+	world->act_idx++;
+}
 
 int write_node_tag_open(struct _simple_sax * sax)
 {
 	return 0;
-}
-
-int checkNodeFlag(World_t * world)
-{
-	if((world->node_flags[world->act_idx] & 0x01) == 0x01)
-	{
-		//printf(".");
-		return 1;
-	}
-	return 0;
-}
-
-void closeNodeTag(World_t * world)
-{
-	//if((world->node_flags[world->act_idx] & 0x01) == 0x01)
-	if(checkNodeFlag(world))
-	{
-		zblock_wr_append(&world->zw_node,"\t</node>\n",9);
-	}
-	world->type_flags = 0;
-	world->act_idx++;
 }
 
 int write_node_tag_close(struct _simple_sax * sax)
@@ -99,13 +104,7 @@ int write_node_tag_close(struct _simple_sax * sax)
 			{
 				if(sax->inside_mask & SAX_TAG_END_FLAG)
 				{
-					closeNodeTag(world_);
-					/*if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
-					{
-						zblock_wr_append(&world_->zw_node,"\t</node>\n",9);
-					}
-					world_->type_flags = 0;
-					world_->act_idx++;*/
+					closeNodeTag(world_, "\t</node>\n", 9);
 					return 0;
 				}
 			}
@@ -113,23 +112,17 @@ int write_node_tag_close(struct _simple_sax * sax)
 			{
 				if(sax->last_byte == '/')
 				{
-					closeNodeTag(world_);
-					/*if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
-					{
-						zblock_wr_append(&world_->zw_node,"/>\n",3);	
-					}
-					world_->type_flags = 0;
-					world_->act_idx++;*/
+					closeNodeTag(world_, "/>\n",3);
 				}
 				if(world_->type_flags)
 				{
-					if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+					if(checkNodeFlag(world_))	
 						zblock_wr_append(&world_->zw_node, ">\n",2);
 				}
 			}
 			if(!strncmp((const char*)sax->tag_name_start,"tag",3))
 			{
-				if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+				if(checkNodeFlag(world_))
 					zblock_wr_append(&world_->zw_node, "/>\n",3);
 			}
 
@@ -174,7 +167,7 @@ int write_node_tag_name(struct _simple_sax * sax)
 
 		if((world_->type_flags == INSIDE_NODE) && (zw_ == NULL))
 		{
-			if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+			if(checkNodeFlag(world_))
 			{
 				zblock_wr_append(&(world_->zw_node), "\t<", 2);
 				zblock_wr_append(&(world_->zw_node), (const char *)sax->tag_start,
@@ -184,7 +177,7 @@ int write_node_tag_name(struct _simple_sax * sax)
 
 		if(zw_ != NULL)
 		{
-			if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+			if(checkNodeFlag(world_))
 			{
 				zblock_wr_append(zw_, "\t<", 2);
 				zblock_wr_append(zw_, (const char *)sax->tag_start,
@@ -238,7 +231,7 @@ int write_node_tag_arg_name(struct _simple_sax * sax)
 
 		if(zw_ != NULL)
 		{
-			if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+			if(checkNodeFlag(world_))
 			{
 				zblock_wr_append(zw_, " ",1);
 				zblock_wr_append(zw_, (const char *)sax->tag_start, tag_act_size-1);
@@ -268,7 +261,7 @@ int write_node_arg_end(struct _simple_sax * sax)
 		{
 			int write_it = 0;
 
-			if((world_->node_flags[world_->act_idx] & 0x01) == 0x01)
+			if(checkNodeFlag(world_))
 				write_it = 1;
 
 			if(write_it)
@@ -331,7 +324,7 @@ int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_
 	if(createOsmHead(&act_world->zw_node, out_path, flags))
 		return -1;
 
-	printf("[--%s--]", act_world->out_path);
+	printf("[--%s--]", out_path);
 
 	zblock_set_start(z_read, NULL, 0);
 
