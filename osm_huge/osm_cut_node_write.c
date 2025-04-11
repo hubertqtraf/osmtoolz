@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <stdlib.h> 
 
+#include "osm_cut_func.c"
+
 void init_write_world_node(World_t * w_ref)
 {
 	w_ref->type_flags = 0x00;
@@ -68,7 +70,11 @@ int inline checkNodeFlag(World_t * world)
 		}
 		break;
 	case 5:
-		printf("TODO!\n");
+		if(get_node_flags2(world->node_flags, world->node_flags_size, world->act_idx))
+		{
+			return 1;
+		}
+		//printf("TODO! (%x) ",get_node_flags2(world->node_flags, world->node_flags_size, world->act_idx));
 		break;
 	default:
 		printf("unknown value: %i\n", world->node_flags_size);
