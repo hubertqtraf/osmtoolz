@@ -137,25 +137,55 @@ int main(int argc, char ** argv)
 
 	zblock_close(&z_);
 
+	if(std_param.val_mode == 5)
+	{
+		fname = get_fname(&std_param, DIR_IN, F_WAY);
+		if(fname == NULL)
+			return -1;
+		printf("open for reading #1: [%s]", fname);
+		if(zblock_rd_open(&z_, fname))
+		{
+			printf("error opening gz-file\n");
+			zblock_del(&z_);
+			return -1;
+		}
+		if(cutWays(&z_, &act_world_) != 0)
+		{
+			printf("main: mem fault\n");
+			return -1;
+		}
+		zblock_close(&z_);
+		printf(" done\n");
+
+		printf("open for wwriting #1: [%s]", fname);
+		if(zblock_rd_open(&z_, fname))
+		{
+			printf("error opening gz-file\n");
+			zblock_del(&z_);
+			return -1;
+		}
+		fname = get_fname(&std_param, DIR_OUT, F_WAY);
+		if(fname == NULL)
+			return -1;
+		writeWays(&z_, &act_world_, fname);
+		zblock_close(&z_);
+		printf(" done\n");
+	}
+
+	fname = get_fname(&std_param, DIR_IN, F_NODE);
 	printf("open #2: %s\n", fname);
 	if(zblock_rd_open(&z_, fname))
         {
-                printf("error opening gz-file\n");
-                zblock_del(&z_);
-                //free(act_world_.in_path);
-                return -1;
-        }
+		printf("error opening gz-file\n");
+		zblock_del(&z_);
+		return -1;
+	}
 
-	fname = get_fname(&std_param, DIR_OUT, F_NODE);
-        //get_out_fname(&act_world_.out_path, select_out, out_file, "_node_20.osm.gz");
+	char * ofname = get_fname(&std_param, DIR_OUT, F_NODE);
 
-        printf("open writeNodes %s ", fname);
-        ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, fname);
-
-        zblock_close(&z_);
-
-        printf(" done (ret = %i)\n", ret);
-
+	printf("open write nodes %s ", ofname);
+	ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, ofname);
+	zblock_close(&z_);
 
 	fname = get_fname(&std_param, DIR_OUT, F_INFO);
 	if(fname != NULL)
@@ -163,7 +193,6 @@ int main(int argc, char ** argv)
 		printf("INFO OUT: %s\n", fname);
 		writeOsmInfo(&(act_world_.info), fname, &source_version);
 	}
-
 
 	//zblock_close(&z);
 	//zblock_del(&z);

@@ -59,8 +59,8 @@ uint64_t inline get_node_id(uint8_t * nodes, uint8_t n_size, uint64_t id)
 
 uint8_t inline get_node_flags2(uint8_t * nodes, uint8_t n_size, uint64_t id)
 {
-	uint8_t * pos = nodes + (id * n_size);
-	return (pos[4] >> 2);
+	uint8_t pos = nodes[(id * n_size) + (n_size-1)];
+	return pos >> 6;
 }
 
 uint8_t inline get_node_flags(uint8_t * nodes, uint8_t n_size, uint64_t id)
