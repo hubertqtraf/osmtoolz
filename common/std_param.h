@@ -49,8 +49,9 @@
 
 #define F_INFO    1
 #define F_NODE    2
-#define F_WAY	  3
+#define F_WAY     3
 #define F_REL     4
+#define F_POINT   5
 
 #define DIR_IN    0
 #define DIR_OUT   1

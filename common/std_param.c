@@ -132,6 +132,10 @@ char * get_fname(StdParam * param, int dir, int mode)
 	case F_REL:
 		sprintf(param->buff, "%s_rel_20.osm.gz", base);
 		break;
+	case F_POINT:
+		sprintf(param->buff, "%s_point_20.osm.gz", base);
+		break;
+
 	default:
 		return NULL;
 	}
