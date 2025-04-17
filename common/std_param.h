@@ -45,7 +45,9 @@
 #define PARM_OUT  0x00000004
 #define PARM_ACC  0x00000008
 #define PARM_MODE 0x00000010
+#define PARM_PT   0x00000020
 #define PARM_TR   0x00000100
+#define PARM_VERB 0x00000200
 
 #define F_INFO    1
 #define F_NODE    2
@@ -63,6 +65,8 @@ typedef struct
 	uint8_t val_thread;
 	uint8_t val_accept;
 	uint8_t val_mode;
+	uint8_t val_point;
+	uint8_t val_verbose;
 	char * in_fname;
 	char * out_fname;
 	char * buff;

@@ -48,6 +48,8 @@ int read_param(StdParam * param, int argc, char ** argv)
 	int select_accept = cmd_args(argc, argv, "-a");
 	int select_thread = cmd_args(argc, argv, "-t");
 	int select_mode   = cmd_args(argc, argv, "-m");
+	int select_point  = cmd_args(argc, argv, "-p");
+	int select_verbose= cmd_args(argc, argv, "-v");
 
 	if(select_rect && (param->flags & PARM_RECT) && (argc > select_rect))
 	{
@@ -84,9 +86,19 @@ int read_param(StdParam * param, int argc, char ** argv)
 		param->val_mode = strtol(argv[select_mode], NULL, 10);
 	}
 
+	if(select_point && (param->flags & PARM_PT) && (argc > select_point))
+	{
+		param->val_point = strtol(argv[select_point], NULL, 10);
+	}
+
 	if(select_thread && (param->flags & PARM_TR) && (argc > select_thread))
 	{
 		param->val_thread = strtol(argv[select_thread], NULL, 10);
+	}
+
+	if(select_verbose && (param->flags & PARM_VERB) && (argc > select_verbose))
+	{
+		param->val_verbose = strtol(argv[select_verbose], NULL, 10);
 	}
 	return 0;
 }

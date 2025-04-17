@@ -52,7 +52,7 @@ int main(int argc, char ** argv)
 	}
 	memset(&act_world_, 0x00, sizeof(World_t));
 	memset(&std_param, 0x00, sizeof(StdParam));
-	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_MODE | PARM_ACC | PARM_TR;
+	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_MODE | PARM_ACC | PARM_TR | PARM_PT | PARM_VERB;
 	read_param(&std_param, argc, argv);
 
 	time_t t1;
