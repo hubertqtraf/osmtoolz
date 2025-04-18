@@ -130,6 +130,7 @@ char * get_fname(StdParam * param, int dir, int mode)
 		return NULL;
 
 	param->buff = (char *)malloc(strlen(base) + 100);
+	param->buff[0] = 0;
 	switch(mode)
 	{
 	case F_INFO:
@@ -171,5 +172,23 @@ void free_param(StdParam * param)
 		free(param->buff);
 		param->buff = NULL;
 	}
+}
+
+int openOsmInFile(StdParam * param, z_block * zref, uint8_t type)
+{
+	char * fname = get_fname(param, DIR_IN, type);
+	//printf("open #1: %s\n", fname);
+	if(fname == NULL)
+	{
+		printf("error name == NULL\n");
+		return -1;
+	}
+	if(zblock_rd_open(zref, fname))
+	{
+		printf("error opening gz-file\n");
+		zblock_del(zref);
+		return -1;
+	}
+	return 0;
 }
 

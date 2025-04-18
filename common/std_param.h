@@ -36,6 +36,8 @@
 #ifndef STD_PARAM_H
 #define STD_PARAM_H
 
+#include "zblock_io.h"
+
 #include <stdint.h>
 
 #define COOR_FAC 10000000.0
@@ -76,6 +78,7 @@ int read_param(StdParam * param, int argc, char ** argv);
 void set_output(StdParam * param, char * name);
 char * get_fname(StdParam * param, int dir, int mode);
 void free_param(StdParam * param);
+int openOsmInFile(StdParam * param, z_block * zref, uint8_t type);
 
 #endif
 
