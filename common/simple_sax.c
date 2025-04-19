@@ -52,8 +52,6 @@ void sax_init(simple_sax * ref, uint8_t accept)
 {
 	int i;
 
-	printf("accept %i\n", accept);
-
 	ref->inside_mask    = 0x00;
 
 	ref->tag_start      = NULL;

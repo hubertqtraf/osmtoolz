@@ -117,7 +117,7 @@ int zblock_new(z_block * z_block, uint8_t flags)
 
 	if(flags & ZB_WRITE)
 	{
-		printf("\nmalloc z_block wr_buff: %lu", z_block->write_size);
+		//printf("\nmalloc z_block wr_buff: %lu", z_block->write_size);
 		if((z_block->wr_buff = (uint8_t*)malloc(z_block->write_size + 1)) == NULL)
 		{
 			return(-1);
@@ -136,7 +136,7 @@ int zblock_new(z_block * z_block, uint8_t flags)
 	}
 	if(flags & ZB_READ)
 	{
-		printf("\nmalloc rd_buff: %lu\n", z_block->read_size);
+		//printf("\nmalloc rd_buff: %lu\n", z_block->read_size);
 		if((z_block->rd_buff = (uint8_t*)malloc(z_block->read_size + 1)) == NULL)
 		{
 			return(-1);

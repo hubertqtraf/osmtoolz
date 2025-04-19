@@ -59,7 +59,6 @@ void init_world_ref_x(World_t * w_ref/*, int32_t rect[4]*/)
 	if(w_ref->info.node.count == 0)
 		return;
 
-	printf(">>> %ld\n", w_ref->info.way.count);
 	if((w_ref->way_flags = (uint8_t *)malloc(sizeof(uint8_t) * (w_ref->info.way.count/* >> 3*/))) == NULL)
 		return;
 	memset(w_ref->way_flags, 0x00, sizeof(uint8_t) * (w_ref->info.way.count/* >> 3*/));
