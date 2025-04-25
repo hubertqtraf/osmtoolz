@@ -460,7 +460,7 @@ void way_write_init_06(struct _simple_sax * xml_ref)
 }
 
 
-int writeWays(z_block * z_read, World_t * act_world, char * w_fname)
+int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -479,12 +479,17 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname)
 	if(createOsmHead(&act_world->zw_out, w_fname, ZB_WRITE))
 		return -1;
 
+	param->max_size = act_world->count_way;
+
 	zblock_set_start(z_read, NULL, 0);
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
 		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- w-w: %ld -", act_world->act_idx);
+		{
+			printProgress(param, "W-w", act_world->act_idx);
+			//printf("- w-w: %ld -", act_world->act_idx);
+		}
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -501,7 +506,11 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	if(1)
+	{
+		printProgress(param, "W-w", act_world->count_way);
+		printf("\n");
+	}
 	if(closeOsm(&act_world->zw_out))
 		return -1;
 

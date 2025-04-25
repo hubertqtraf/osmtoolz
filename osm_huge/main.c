@@ -55,6 +55,8 @@ int main(int argc, char ** argv)
 	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_MODE | PARM_ACC | PARM_TR | PARM_PT | PARM_VERB;
 	read_param(&std_param, argc, argv);
 
+	std_param.bar_width = 60;
+
 	time_t t1;
 	time(&t1);
 	uint8_t p_n = 0;	// ?????
@@ -119,7 +121,7 @@ int main(int argc, char ** argv)
 	if(!std_param.val_mode)
 		std_param.val_mode = 1;
 	setMode(&act_world_, std_param.val_mode);
-	int ret = readNodes(&z_, &act_world_, std_param.rect);
+	int ret = readNodes(&z_, &act_world_, &std_param); //std_param.rect);
 
 	printf(", done (ret = %i)\n", ret);
 
@@ -129,7 +131,7 @@ int main(int argc, char ** argv)
 	{
 		if(openOsmInFile(&std_param, &z_, F_WAY))
 			return -1;
-		if(cutWays(&z_, &act_world_) != 0)
+		if(cutWays(&z_, &act_world_, &std_param) != 0)
 		{
 			printf("main: mem fault\n");
 			return -1;
@@ -142,7 +144,7 @@ int main(int argc, char ** argv)
 		fname = get_fname(&std_param, DIR_OUT, F_WAY);
 		if(fname == NULL)
 			return -1;
-		writeWays(&z_, &act_world_, fname);
+		writeWays(&z_, &act_world_, fname, &std_param);
 		zblock_close(&z_);
 		printf(" done\n");
 	}
@@ -152,7 +154,7 @@ int main(int argc, char ** argv)
 	char * ofname = get_fname(&std_param, DIR_OUT, F_NODE);
 
 	printf("open write nodes %s ", ofname);
-	ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, ofname);
+	ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, ofname, &std_param);
 	zblock_close(&z_);
 
 	fname = get_fname(&std_param, DIR_OUT, F_INFO);

@@ -375,7 +375,7 @@ void way_count_init_06(struct _simple_sax * xml_ref)
 	sax_add_cb(xml_ref, load_way_tag_arg_name, SAX_CB_ARG_NAME);
 }
 
-int cutWays(z_block * z_read, World_t * act_world/*, int32_t rect[4]*/)
+int cutWays(z_block * z_read, World_t * act_world, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -387,6 +387,9 @@ int cutWays(z_block * z_read, World_t * act_world/*, int32_t rect[4]*/)
 	init_world_ref_x(act_world/*, rect*/);
 	way_count_init_06(&sax);
 
+	// copy the number of nodes of the old dataset
+        param->max_size = act_world->count_way = act_world->info.way.count;
+
 	sax_set_data_ref(&sax, act_world);
 
 	zblock_set_start(z_read, NULL, 0);
@@ -394,7 +397,10 @@ int cutWays(z_block * z_read, World_t * act_world/*, int32_t rect[4]*/)
 	while((n_read = zblock_read(z_read)) > 0)
 	{
 		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- n-r: %ld -", act_world->act_idx);
+		{
+			printProgress(param, "W-r", act_world->act_idx);	
+			//printf("- n-r: %ld -", act_world->act_idx);
+		}
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -411,7 +417,11 @@ int cutWays(z_block * z_read, World_t * act_world/*, int32_t rect[4]*/)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	if(1)
+	{
+		printProgress(param, "W-r", act_world->info.way.count);
+		printf("\n");
+	}
 	sax_cleanup(&sax);
 
 	return 0;

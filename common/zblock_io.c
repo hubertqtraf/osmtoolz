@@ -306,8 +306,6 @@ int zblock_read(z_block * z_read)
 	else
 	{
 		//printf("rd %i %li \n", z_read->pos, z_read->read_size);
-		printf("*");
-		fflush(stdout);
 		z_read->act_size = gzread(z_read->z_file,
 			z_read->rd_buff+z_read->pos, z_read->read_size);
 	}

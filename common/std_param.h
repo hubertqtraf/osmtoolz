@@ -72,6 +72,9 @@ typedef struct
 	char * in_fname;
 	char * out_fname;
 	char * buff;
+
+	uint64_t max_size;
+	uint8_t bar_width;
 }StdParam;
 
 int read_param(StdParam * param, int argc, char ** argv);
@@ -79,6 +82,8 @@ void set_output(StdParam * param, char * name);
 char * get_fname(StdParam * param, int dir, int mode);
 void free_param(StdParam * param);
 int openOsmInFile(StdParam * param, z_block * zref, uint8_t type);
+
+void printProgress(StdParam * param, char * start, uint64_t count);
 
 #endif
 

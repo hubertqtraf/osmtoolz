@@ -35,6 +35,7 @@
 
 #include "../common/zblock_io.h"
 #include "../common/osm_info.h"
+#include "../common/std_param.h"
 
 #include <stdint.h>
 
@@ -94,6 +95,8 @@ typedef struct
 	uint64_t id;
 
 	OsmInfo_t info;
+	uint64_t count_node;
+	uint64_t count_way;
 
 	char save_tag[10];
 
@@ -127,10 +130,10 @@ typedef struct
 
 void setMode(World_t * w_ref, uint8_t mode);
 
-int readNodes(z_block * z_read, World_t * act_world, int32_t rect[4]);
-int cutWays(z_block * z_read, World_t * act_world/*, int32_t rect[4]*/);
-int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_path);
-int writeWays(z_block * z_read, World_t * act_world, char * w_fname);
+int readNodes(z_block * z_read, World_t * act_world, StdParam * param);
+int cutWays(z_block * z_read, World_t * act_world, StdParam * param);
+int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_path, StdParam * param);
+int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * param);
 
 #endif // _OSM_NODE_CUT_H
 

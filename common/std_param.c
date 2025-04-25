@@ -192,3 +192,22 @@ int openOsmInFile(StdParam * param, z_block * zref, uint8_t type)
 	return 0;
 }
 
+void printProgress(StdParam * param, char * start, uint64_t count)
+{
+	float progress = (float) count / param->max_size;
+	int bar_length = progress * param->bar_width;
+
+	printf("\r%s: [", start);
+	for(int i = 0; i < bar_length; ++i)
+	{
+		printf("#");
+	}
+	for(int i = bar_length; i < param->bar_width; ++i)
+	{
+		printf(" ");
+	}
+	printf("] %.2f%%", progress * 100);
+
+	fflush(stdout);
+}
+

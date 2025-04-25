@@ -313,7 +313,7 @@ void node_write_init_06(struct _simple_sax * xml_ref)
 }
 
 
-int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_path)
+int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_path, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -330,15 +330,18 @@ int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_
 	if(createOsmHead(&act_world->zw_node, out_path, flags))
 		return -1;
 
-	printf("[--%s--]", out_path);
+	param->max_size = act_world->count_node;
+	//printf("[--%s--]", out_path);
 
 	zblock_set_start(z_read, NULL, 0);
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
 		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- n-w: %ld -", act_world->act_idx);
-
+		{
+			printProgress(param, "N-w", act_world->act_idx);	
+			//printf("- n-w: %ld %ld-\n", act_world->act_idx, act_world->info.node.count);
+		}
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -355,7 +358,11 @@ int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	if(1)
+	{
+		printProgress(param, "N-w", act_world->count_node);
+		printf("\n");
+	}
 	if(closeOsm(&act_world->zw_node))
 		return -1;
 

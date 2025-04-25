@@ -76,6 +76,8 @@ void init_world_ref(World_t * w_ref, int32_t rect[4])
 int createNodeFlagList(World_t * w_ref)
 {
 	printf("I %s %i node_flags_size: %i %li\n", __FILE__, __LINE__, w_ref->node_flags_size, w_ref->info.node.count);
+	//printf("I %s %i node_flags_size: %i %li\n", __PRETTY_FUNCTION__, __LINE__, w_ref->node_flags_size, w_ref->info.node.count);
+
 	if(w_ref->info.node.count == 0)
 		return -1;
 	if(w_ref->node_flags != NULL)
@@ -324,7 +326,7 @@ void node_count_init_06(struct _simple_sax * xml_ref)
 	sax_add_cb(xml_ref, load_node_tag_arg_name, SAX_CB_ARG_NAME);
 }
 
-int readNodes(z_block * z_read, World_t * act_world, int32_t rect[4])
+int readNodes(z_block * z_read, World_t * act_world, StdParam * param) //int32_t rect[4])
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -333,7 +335,7 @@ int readNodes(z_block * z_read, World_t * act_world, int32_t rect[4])
 	int tag_len=0;
 
 	sax_init(&sax, 0);
-	init_world_ref(act_world, rect);
+	init_world_ref(act_world, param->rect);
 	if(createNodeFlagList(act_world))
 		return -1;
 
@@ -343,10 +345,16 @@ int readNodes(z_block * z_read, World_t * act_world, int32_t rect[4])
 
 	zblock_set_start(z_read, NULL, 0);
 
+	// copy the number of nodes of the old dataset
+	param->max_size = act_world->count_node = act_world->info.node.count;
+
 	while((n_read = zblock_read(z_read)) > 0)
 	{
 		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- n-r: %ld -", act_world->act_idx);
+		{
+			printProgress(param, "N-r", act_world->act_idx);	
+			//printf("- n-r: %ld -", act_world->act_idx);
+		}
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -363,7 +371,11 @@ int readNodes(z_block * z_read, World_t * act_world, int32_t rect[4])
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	if(1)
+	{
+		printProgress(param, "N-r", act_world->info.node.count);
+		printf("\n");
+	}
 	sax_cleanup(&sax);
 
 	return 0;
