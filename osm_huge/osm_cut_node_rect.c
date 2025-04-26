@@ -75,7 +75,8 @@ void init_world_ref(World_t * w_ref, int32_t rect[4])
 
 int createNodeFlagList(World_t * w_ref)
 {
-	printf("I %s %i node_flags_size: %i %li\n", __FILE__, __LINE__, w_ref->node_flags_size, w_ref->info.node.count);
+	// TODO: just a test
+	//printf("I %s %i node_flags_size: %i %li\n", __FILE__, __LINE__, w_ref->node_flags_size, w_ref->info.node.count);
 	//printf("I %s %i node_flags_size: %i %li\n", __PRETTY_FUNCTION__, __LINE__, w_ref->node_flags_size, w_ref->info.node.count);
 
 	if(w_ref->info.node.count == 0)

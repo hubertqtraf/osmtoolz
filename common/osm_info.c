@@ -325,7 +325,6 @@ int readOsmInfo(OsmInfo_t * info, const char * fname, Version_t * version, int a
 	OsmXmlInfo ox_info;
 	z_block z_read;
 
-	printf("====== readOsmInfo ======\n");
 	zblock_new(&z_read, ZB_READ);
 
 	if(zblock_rd_open(&z_read, fname))
