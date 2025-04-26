@@ -488,7 +488,6 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * 
 		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
 		{
 			printProgress(param, "W-w", act_world->act_idx);
-			//printf("- w-w: %ld -", act_world->act_idx);
 		}
 		sax.tag_start = zblock_first(z_read);
 
@@ -508,8 +507,7 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * 
 	}
 	if(1)
 	{
-		printProgress(param, "W-w", act_world->count_way);
-		printf("\n");
+		fullProgress(param, "W-w");
 	}
 	if(closeOsm(&act_world->zw_out))
 		return -1;

@@ -340,7 +340,6 @@ int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_
 		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
 		{
 			printProgress(param, "N-w", act_world->act_idx);	
-			//printf("- n-w: %ld %ld-\n", act_world->act_idx, act_world->info.node.count);
 		}
 		sax.tag_start = zblock_first(z_read);
 
@@ -360,8 +359,7 @@ int writeNodes(z_block * z_read, World_t * act_world, uint8_t flags, char * out_
 	}
 	if(1)
 	{
-		printProgress(param, "N-w", act_world->count_node);
-		printf("\n");
+		fullProgress(param, "N-w");
 	}
 	if(closeOsm(&act_world->zw_node))
 		return -1;

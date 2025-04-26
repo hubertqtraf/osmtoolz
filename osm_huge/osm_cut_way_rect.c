@@ -399,7 +399,6 @@ int cutWays(z_block * z_read, World_t * act_world, StdParam * param)
 		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
 		{
 			printProgress(param, "W-r", act_world->act_idx);	
-			//printf("- n-r: %ld -", act_world->act_idx);
 		}
 		sax.tag_start = zblock_first(z_read);
 
@@ -419,8 +418,7 @@ int cutWays(z_block * z_read, World_t * act_world, StdParam * param)
 	}
 	if(1)
 	{
-		printProgress(param, "W-r", act_world->info.way.count);
-		printf("\n");
+		fullProgress(param, "W-r");
 	}
 	sax_cleanup(&sax);
 

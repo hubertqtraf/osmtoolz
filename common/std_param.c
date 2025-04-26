@@ -211,3 +211,9 @@ void printProgress(StdParam * param, char * start, uint64_t count)
 	fflush(stdout);
 }
 
+void fullProgress(StdParam * param, char * start)
+{
+	printProgress(param, start, param->max_size);
+	printf("\n");
+}
+

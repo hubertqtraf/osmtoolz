@@ -353,7 +353,6 @@ int readNodes(z_block * z_read, World_t * act_world, StdParam * param) //int32_t
 		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
 		{
 			printProgress(param, "N-r", act_world->act_idx);	
-			//printf("- n-r: %ld -", act_world->act_idx);
 		}
 		sax.tag_start = zblock_first(z_read);
 
@@ -373,8 +372,7 @@ int readNodes(z_block * z_read, World_t * act_world, StdParam * param) //int32_t
 	}
 	if(1)
 	{
-		printProgress(param, "N-r", act_world->info.node.count);
-		printf("\n");
+		fullProgress(param, "N-r");
 	}
 	sax_cleanup(&sax);
 

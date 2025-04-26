@@ -84,6 +84,7 @@ void free_param(StdParam * param);
 int openOsmInFile(StdParam * param, z_block * zref, uint8_t type);
 
 void printProgress(StdParam * param, char * start, uint64_t count);
+void fullProgress(StdParam * param, char * start);
 
 #endif
 
