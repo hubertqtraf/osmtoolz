@@ -53,6 +53,7 @@ int main(int argc, char ** argv)
 	memset(&act_world_, 0x00, sizeof(World_t));
 	memset(&std_param, 0x00, sizeof(StdParam));
 	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_MODE | PARM_ACC | PARM_TR | PARM_PT | PARM_VERB;
+	std_param.val_verbose = 1;
 	read_param(&std_param, argc, argv);
 
 	std_param.bar_width = 60;
@@ -75,7 +76,11 @@ int main(int argc, char ** argv)
 		set_output(&std_param, "undefined");
 		printf("parameter error: output not defined, set default\n");
 	}
-	printf("rect: %i %i %i %i\n", std_param.rect[0], std_param.rect[1], std_param.rect[2], std_param.rect[3]);
+	if(std_param.val_verbose)
+	{
+		printf("rect: %i %i %i %i\n", std_param.rect[0],
+			std_param.rect[1], std_param.rect[2], std_param.rect[3]);
+	}
 	addBox(&source_version.box, std_param.rect);
 	initOsmInfo(&(act_world_.info));
 	if(readOsmInfo(&(act_world_.info), fname, &source_version, 0))
@@ -89,9 +94,12 @@ int main(int argc, char ** argv)
 		printf("error opening gz-file [%s]\n",argv[1]);
 		return -1;
 	}
-	printf("\nIN  [%s]\n", get_fname(&std_param, DIR_IN, F_NODE));
-	printf("OUT [%s]\n", get_fname(&std_param, DIR_OUT, F_NODE));
-	printf("[%s]\n",source_version.source);
+	if(std_param.val_verbose)
+	{
+		printf("\nIN  [%s]\n", get_fname(&std_param, DIR_IN, F_NODE));
+		printf("OUT [%s]\n", get_fname(&std_param, DIR_OUT, F_NODE));
+		printf("[%s]\n",source_version.source);
+	}
 
 	source_version.n_64_flags = p_n;
 
@@ -123,7 +131,8 @@ int main(int argc, char ** argv)
 	setMode(&act_world_, std_param.val_mode);
 	int ret = readNodes(&z_, &act_world_, &std_param); //std_param.rect);
 
-	printf(", done (ret = %i)\n", ret);
+	if(std_param.val_verbose)
+		printf("... done (ret = %i)\n", ret);
 
 	zblock_close(&z_);
 
@@ -137,7 +146,8 @@ int main(int argc, char ** argv)
 			return -1;
 		}
 		zblock_close(&z_);
-		printf(" done\n");
+		if(std_param.val_verbose)
+			printf("... done\n");
 
 		if(openOsmInFile(&std_param, &z_, F_WAY))
 			return -1;
@@ -146,34 +156,44 @@ int main(int argc, char ** argv)
 			return -1;
 		writeWays(&z_, &act_world_, fname, &std_param);
 		zblock_close(&z_);
-		printf(" done\n");
+		if(std_param.val_verbose)
+			printf("... done\n");
 	}
 	if(openOsmInFile(&std_param, &z_, F_NODE))
 		return -1;
 
 	char * ofname = get_fname(&std_param, DIR_OUT, F_NODE);
 
-	printf("open write nodes %s ", ofname);
+	if(std_param.val_verbose)
+		printf("open write nodes %s ", ofname);
 	ret = writeNodes(&z_, &act_world_, ZB_WRITE | ZB_USE_W_THREAD, ofname, &std_param);
 	zblock_close(&z_);
+
+	if(std_param.val_verbose)
+		printf("... done\n");
 
 	fname = get_fname(&std_param, DIR_OUT, F_INFO);
 	if(fname != NULL)
 	{
-		printf("INFO OUT: %s\n", fname);
+		if(std_param.val_verbose)
+			printf("INFO OUT: %s\n", fname);
 		writeOsmInfo(&(act_world_.info), fname, &source_version);
 	}
 
 	zblock_close(&z_);
 	zblock_del(&z_);
 
-	char t_buffer[100];
-	cmd_time(t1, t_buffer);
-	printf("\n%s", t_buffer);
+	if(std_param.val_verbose)
+	{
+		char t_buffer[100];
+		cmd_time(t1, t_buffer);
+		printf("\n%s", t_buffer);
+	}
 
 	cleanVersion(&source_version);
 	free_param(&std_param);
-	printf("... done\n");
+	if(std_param.val_verbose)
+		printf("... done\n");
 
 	return 0;
 }

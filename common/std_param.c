@@ -194,6 +194,11 @@ int openOsmInFile(StdParam * param, z_block * zref, uint8_t type)
 
 void printProgress(StdParam * param, char * start, uint64_t count)
 {
+	if((param == NULL) || (start == NULL))
+		return;
+	if(param->val_verbose == 0)
+		return;
+
 	float progress = (float) count / param->max_size;
 	int bar_length = progress * param->bar_width;
 
@@ -213,6 +218,8 @@ void printProgress(StdParam * param, char * start, uint64_t count)
 
 void fullProgress(StdParam * param, char * start)
 {
+	if(param->val_verbose == 0)
+		return;
 	printProgress(param, start, param->max_size);
 	printf("\n");
 }

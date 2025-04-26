@@ -238,7 +238,7 @@ int zblock_rd_open(z_block * z_read, const char * z_name)
 {
 	int fd;
 
-	printf("zblock_rd_open: %s\n", z_name);
+	//printf("zblock_rd_open: %s\n", z_name);
 
 	if((fd = open(z_name,O_RDONLY/*|O_LARGEFILE*/))==(-1))
 	{

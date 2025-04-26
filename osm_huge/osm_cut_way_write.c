@@ -468,8 +468,6 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * 
 	simple_sax sax;
 	int tag_len=0;
 
-	printf("write_ %s\n", w_fname);
-
 	sax_init(&sax, 0);
 	init_write_world_way(act_world);
 	way_write_init_06(&sax);
@@ -485,10 +483,8 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * 
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-		{
-			printProgress(param, "W-w", act_world->act_idx);
-		}
+		printProgress(param, "W-w", act_world->act_idx);
+
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -505,10 +501,8 @@ int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * 
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-	if(1)
-	{
-		fullProgress(param, "W-w");
-	}
+	fullProgress(param, "W-w");
+
 	if(closeOsm(&act_world->zw_out))
 		return -1;
 

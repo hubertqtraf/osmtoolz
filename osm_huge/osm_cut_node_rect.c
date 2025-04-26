@@ -70,7 +70,7 @@ void init_world_ref(World_t * w_ref, int32_t rect[4])
 	w_ref->select_rect[1] = ((double)rect[1]) / 10000000.0;
 	w_ref->select_rect[2] = ((double)rect[2]) / 10000000.0;
 	w_ref->select_rect[3] = ((double)rect[3]) / 10000000.0;
-	printf("init rect: %f %f %f %f\n", w_ref->select_rect[0], w_ref->select_rect[1], w_ref->select_rect[2], w_ref->select_rect[3]);
+	//printf("init rect: %f %f %f %f\n", w_ref->select_rect[0], w_ref->select_rect[1], w_ref->select_rect[2], w_ref->select_rect[3]);
 }
 
 int createNodeFlagList(World_t * w_ref)
@@ -94,7 +94,7 @@ int createNodeFlagList(World_t * w_ref)
 void setMode(World_t * w_ref, uint8_t mode)
 {
 	w_ref->node_flags_size = mode;
-	printf("mode: %i\n", w_ref->node_flags_size);
+	//printf("mode: %i\n", w_ref->node_flags_size);
 }
 
 int checkSize(World_t * w_ref)
@@ -350,10 +350,8 @@ int readNodes(z_block * z_read, World_t * act_world, StdParam * param) //int32_t
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
-		{
-			printProgress(param, "N-r", act_world->act_idx);	
-		}
+		printProgress(param, "N-r", act_world->act_idx);
+
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -370,10 +368,7 @@ int readNodes(z_block * z_read, World_t * act_world, StdParam * param) //int32_t
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-	if(1)
-	{
-		fullProgress(param, "N-r");
-	}
+	fullProgress(param, "N-r");
 	sax_cleanup(&sax);
 
 	return 0;

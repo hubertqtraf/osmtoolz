@@ -71,16 +71,12 @@ void init_world_ref_x(World_t * w_ref/*, int32_t rect[4]*/)
 	}
 	memset(w_ref->node_ref_list, 0x00, sizeof(uint64_t*) * w_ref->info.way.member);
 
-
-
 	//printf("rect %i\n", rect[0]);
 
 	/*w_ref->select_rect[0] = ((double)rect[0]) / 10000000.0; 
 	w_ref->select_rect[1] = ((double)rect[1]) / 10000000.0;
 	w_ref->select_rect[2] = ((double)rect[2]) / 10000000.0;
 	w_ref->select_rect[3] = ((double)rect[3]) / 10000000.0;*/
-
-	printf("rect %f\n", w_ref->select_rect[0]);
 }
 
 
@@ -396,10 +392,8 @@ int cutWays(z_block * z_read, World_t * act_world, StdParam * param)
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)	// TODO: set flag for debug output like: act_world->flags & DEBUG_1
-		{
-			printProgress(param, "W-r", act_world->act_idx);	
-		}
+		printProgress(param, "W-r", act_world->act_idx);
+
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -416,10 +410,8 @@ int cutWays(z_block * z_read, World_t * act_world, StdParam * param)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-	if(1)
-	{
-		fullProgress(param, "W-r");
-	}
+	fullProgress(param, "W-r");
+
 	sax_cleanup(&sax);
 
 	return 0;
