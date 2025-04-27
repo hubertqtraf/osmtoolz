@@ -234,6 +234,22 @@ void zblock_del(z_block * zblock)
 	}
 }
 
+int zblock_zip_size(z_block * z_read, const char * z_name)
+{
+	z_read->zip_size = 0;
+	z_read->zip_read = 0;
+	FILE * ffd = fopen(z_name, "r");
+	if(ffd == NULL)
+	{
+		return -1;
+	}
+	fseek(ffd, 0, SEEK_END); // seek to end of file
+	z_read->zip_size = ftell(ffd); // get current file pointer
+	fseek(ffd, 0, SEEK_SET);
+	fclose(ffd);
+	return 0;
+}
+
 int zblock_rd_open(z_block * z_read, const char * z_name)
 {
 	int fd;
@@ -288,6 +304,8 @@ int zblock_read(z_block * z_read)
 		{
 			z_read->act_size = gzread(z_read->z_file,
 				z_read->rd_cp_buff, z_read->read_buff_size);
+			z_read->zip_read += z_read->read_buff_size;
+			printf("## %li %li\n", z_read->zip_size, z_read->zip_read);
 		}
 
 		/*if(z_read->tflags[READ_THREAD] == 1)
@@ -308,6 +326,7 @@ int zblock_read(z_block * z_read)
 		//printf("rd %i %li \n", z_read->pos, z_read->read_size);
 		z_read->act_size = gzread(z_read->z_file,
 			z_read->rd_buff+z_read->pos, z_read->read_size);
+		z_read->zip_read += z_read->read_buff_size;
 	}
 	return(z_read->act_size);
 }

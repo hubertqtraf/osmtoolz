@@ -36,6 +36,7 @@
 
 #include "../common/zblock_io.h"
 #include "../common/osm_info.h"
+#include "../common/std_param.h"
 
 #include <stdint.h>
 
@@ -111,7 +112,7 @@ typedef struct
 
 int countNodes(z_block * z_read, World_t * act_node, uint8_t n_64_mode, uint8_t flags);
 
-int countNodesOut(z_block * z_read, World_t * act_node, char * out, uint8_t flags);
+int countNodesOut(z_block * z_read, World_t * act_node, char * out, StdParam * param, uint8_t flags);
 
 int readNodes(z_block * z_read, World_t * act_world);
 

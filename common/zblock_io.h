@@ -73,6 +73,8 @@ typedef struct
 	int wr_filled;
 	int wr_cp_filled;
 
+	size_t zip_size;
+	size_t zip_read;
 	int act_size;
 	gzFile z_file;
 	int pos;
@@ -87,6 +89,7 @@ void zblock_set_thread_opt(z_block * z_block, uint8_t flags);
 void zblock_reset(z_block * z_info);
 int zblock_set_copy_mode(z_block * r_read);
 void zblock_del(z_block * z_read);
+int zblock_zip_size(z_block * z_read, const char * z_name);
 int zblock_rd_open(z_block * z_read, const char * fname);
 int zblock_wr_open(z_block * z_read, const char * fname);
 int zblock_read(z_block * z_read);

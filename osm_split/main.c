@@ -98,7 +98,11 @@ int main(int argc, char ** argv)
 
 	act_world.accept = std_param.val_accept;
 	zblock_new(&z, ZB_READ); //| ZB_USE_R_THREAD);
+	zblock_zip_size(&z, std_param.in_fname);
 	zblock_rd_open(&z, std_param.in_fname); //argv[select_file]);
+
+	std_param.bar_width = 60;
+	std_param.val_verbose = 1;
 
 	switch(source_version.version)
 	{
@@ -111,7 +115,8 @@ int main(int argc, char ** argv)
 
 	case 5:
 	case 6:
-		countNodesOut(&z, &act_world, std_param.out_fname, ZB_WRITE | ZB_USE_W_THREAD);
+		std_param.max_size = (z.zip_size * 9);
+		countNodesOut(&z, &act_world, std_param.out_fname, &std_param, ZB_WRITE | ZB_USE_W_THREAD);
 		break;
 
 	default:

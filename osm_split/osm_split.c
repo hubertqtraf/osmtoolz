@@ -116,7 +116,7 @@ int split_tag_close(struct _simple_sax * sax)
 					if(world_->info.way.member < world_->count_nd)
 					{
 						world_->info.way.member = world_->count_nd;
-						printf("\nway max node count: %ld\n",world_->info.way.member);
+						//printf("\nway max node count: %ld\n",world_->info.way.member);
 					}
 					world_->count_nd = 0;
 
@@ -166,7 +166,7 @@ int split_tag_close(struct _simple_sax * sax)
 					if(world_->info.rel.member < world_->count_member)
 					{
 						world_->info.rel.member = world_->count_member;
-						printf("\nrelation member max count: %li\n", world_->info.rel.member);
+						//printf("\nrelation member max count: %li\n", world_->info.rel.member);
 					}
 					world_->count_member = 0;
 					world_->type_flags = 0;
@@ -557,7 +557,7 @@ int countNodes(z_block * z_read, World_t * act_world, uint8_t n_64_mode, uint8_t
 	return 0;
 }
 
-int countNodesOut(z_block * z_read, World_t * act_world, char * out, uint8_t flags)
+int countNodesOut(z_block * z_read, World_t * act_world, char * out, StdParam * param, uint8_t flags)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -600,6 +600,10 @@ int countNodesOut(z_block * z_read, World_t * act_world, char * out, uint8_t fla
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
+		if(z_read->zip_read < param->max_size)
+			printProgress(param, "estimated", z_read->zip_read);
+		else
+			printProgress(param, "estimated", param->max_size);
 		sax.tag_start = zblock_first(z_read);
 
 		z_buf = zblock_buff(z_read, &z_size);
@@ -616,6 +620,7 @@ int countNodesOut(z_block * z_read, World_t * act_world, char * out, uint8_t fla
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
+	fullProgress(param, "estimated");
 
 	closeOsm(&act_world->zw_node);
 	closeOsm(&act_world->zw_way);
