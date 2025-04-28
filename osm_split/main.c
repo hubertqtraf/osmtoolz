@@ -50,7 +50,8 @@ int main(int argc, char ** argv)
 		exit(-1);
 	}
 	memset(&std_param, 0x00, sizeof(StdParam));
-	std_param.flags = PARM_FILE | PARM_OUT | PARM_ACC | PARM_TR;
+	std_param.flags = PARM_FILE | PARM_OUT | PARM_ACC | PARM_TR | PARM_VERB;
+	std_param.val_verbose = 1;
 	read_param(&std_param, argc, argv);
 
 	time_t t1;
@@ -69,15 +70,17 @@ int main(int argc, char ** argv)
 		printf("parameter error: output not defined, set default\n");
 	}
 
-	printf("IN  [%s]\n", std_param.in_fname);
-	printf("OUT [%s]\n", std_param.out_fname);
+	if(std_param.val_verbose)
+	{
+		printf("IN  [%s]\n", std_param.in_fname);
+		printf("OUT [%s]\n", std_param.out_fname);
+	}
 
 	if(getVersion(std_param.in_fname, &source_version, std_param.val_accept) == (-1))
 	{
 		printf("error opening gz-file [%s]\n",argv[1]);
 		return -1;
 	}
-	printf("[%s]\n",source_version.source);
 
 	source_version.n_64_flags = p_n;
 
@@ -87,8 +90,8 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	printf("version: 0.%i; store coordinates in id: %i \n",
-		source_version.version, p_n);
+	//printf("version: 0.%i; store coordinates in id: %i \n",
+	//	source_version.version, p_n);
 
 	//------------------------------------------------------------------
 
@@ -102,7 +105,6 @@ int main(int argc, char ** argv)
 	zblock_rd_open(&z, std_param.in_fname); //argv[select_file]);
 
 	std_param.bar_width = 60;
-	std_param.val_verbose = 1;
 
 	switch(source_version.version)
 	{
@@ -128,25 +130,30 @@ int main(int argc, char ** argv)
 	}
 	zblock_close(&z);
 
-	printf("split done, nodes: min %ld, max %ld\n",
-		act_world.info.node.min_id, act_world.info.node.max_id);
-
+	if(std_param.val_verbose)
+	{
+		printf("split done, nodes: min %ld, max %ld\n",
+			act_world.info.node.min_id, act_world.info.node.max_id);
+	}
 	char * fname = get_fname(&std_param, DIR_OUT, F_INFO);
 	if(fname != NULL)
 	{
-		printf("fname: %s\n", fname);
 		writeOsmInfo(&(act_world.info), fname, &source_version);
 	}
 	zblock_close(&z);
 	zblock_del(&z);
 
-	char t_buffer[100];
-	cmd_time(t1, t_buffer);
-	//printf("%s\n", t_buffer);
+	if(std_param.val_verbose)
+	{
+		printf("output info file: %s\n", fname);
+		char t_buffer[100];
+		cmd_time(t1, t_buffer);
+		printf("%s", t_buffer);
+		printf("done\n");
+	}
 
 	cleanVersion(&source_version);
 	free_param(&std_param);
-	printf("\ndone\n");
 
 	return 0;
 }
