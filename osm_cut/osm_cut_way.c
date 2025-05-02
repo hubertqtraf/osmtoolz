@@ -410,7 +410,7 @@ void way_count_init_06(struct _simple_sax * xml_ref)
 	sax_add_cb(xml_ref, load_way_tag_arg_name, SAX_CB_ARG_NAME);
 }
 
-int readWays(z_block * z_read, World_t * act_world)
+int readWays(z_block * z_read, World_t * act_world, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -429,12 +429,13 @@ int readWays(z_block * z_read, World_t * act_world)
 
 	sax_set_data_ref(&sax, act_world);
 
+	param->max_size = act_world->count_way = act_world->info.way.count;
+
 	zblock_set_start(z_read, NULL, 0);
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- w-r: %ld -", act_world->act_idx);
+		printProgress(param, "W-r", act_world->act_idx);
 
 		sax.tag_start = zblock_first(z_read);
 
@@ -452,7 +453,7 @@ int readWays(z_block * z_read, World_t * act_world)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	fullProgress(param, "W-r");
 	sax_cleanup(&sax);
 
 	return 0;

@@ -274,7 +274,7 @@ void node_write_init_06(struct _simple_sax * xml_ref)
 	sax_add_cb(xml_ref, write_node_tag_arg_name, SAX_CB_ARG_NAME);
 }
 
-int writeNodes(z_block * z_read, World_t * act_world, char * p_fname)
+int writeNodes(z_block * z_read, World_t * act_world, char * p_fname, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -299,12 +299,13 @@ int writeNodes(z_block * z_read, World_t * act_world, char * p_fname)
 		return -1;
 	//printf("out files:  %s %s\n", act_world->out_path, p_fname);
 
+	param->max_size = act_world->count_node;
+
 	zblock_set_start(z_read, NULL, 0);
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- n-w: %ld -", act_world->act_idx);
+		printProgress(param, "N-w", act_world->act_idx);
 
 		sax.tag_start = zblock_first(z_read);
 
@@ -322,6 +323,7 @@ int writeNodes(z_block * z_read, World_t * act_world, char * p_fname)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
+	fullProgress(param, "N-w");
 
 	if(closeOsm(&act_world->zw_out))
 		return -1;

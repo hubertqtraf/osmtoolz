@@ -278,7 +278,7 @@ void node_count_init_06(struct _simple_sax * xml_ref)
 }
 
 
-int readNodes(z_block * z_read, World_t * act_world, int mode)
+int readNodes(z_block * z_read, World_t * act_world, int mode, StdParam * param)
 {
 	int n_read;
 	unsigned char * z_buf;
@@ -295,12 +295,12 @@ int readNodes(z_block * z_read, World_t * act_world, int mode)
 
 	zblock_set_start(z_read, NULL, 0);
 
+	param->max_size = act_world->count_node = act_world->info.node.count;
 	//printf("after zblock_set_start\n");
 
 	while((n_read = zblock_read(z_read)) > 0)
 	{
-		if(1)   // TODO: set flag for debug output like: act_world->flags & DEBUG_1
-			printf("- n-r: %ld -", act_world->act_idx);
+		printProgress(param, "N-r", act_world->act_idx);
 
 		sax.tag_start = zblock_first(z_read);
 
@@ -318,7 +318,7 @@ int readNodes(z_block * z_read, World_t * act_world, int mode)
 
 		zblock_set_start(z_read, sax.tag_start, tag_len);
 	}
-
+	fullProgress(param, "N-r");
 	sax_cleanup(&sax);
 
 	//printf("after sax_cleanup\n");

@@ -57,8 +57,10 @@ int main(int argc, char ** argv)
 	}
 
 	memset(&std_param, 0x00, sizeof(StdParam));
-	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_ACC | PARM_TR;
+	std_param.flags = PARM_FILE | PARM_RECT | PARM_OUT | PARM_ACC | PARM_TR | PARM_PT | PARM_VERB;
+	std_param.val_verbose = 1;
 	read_param(&std_param, argc, argv);	
+	std_param.bar_width = 60;
 
 	Version_t source_version;
 	memset(&source_version, 0x00, sizeof(Version_t));
@@ -163,7 +165,7 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	readNodes(&z_, &act_world_, 0);
+	readNodes(&z_, &act_world_, 0, &std_param);
 
 	printf(" done\n");
 
@@ -179,7 +181,7 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	if(readWays(&z_, &act_world_) != 0)
+	if(readWays(&z_, &act_world_, &std_param) != 0)
 	{
 		printf("main: mem fault\n");
 		return -1;
@@ -200,7 +202,7 @@ int main(int argc, char ** argv)
                 return -1;
         }
 
-	if(readRelations(&z_, &act_world_) != 0)
+	if(readRelations(&z_, &act_world_, &std_param) != 0)
         {
                 printf("main: mem fault\n");
                 return -1;
@@ -229,7 +231,7 @@ int main(int argc, char ** argv)
 	}
 
 	printf("open #2 writeNodes N (%s) P (%s) ", act_world_.out_path, buff);
-	writeNodes(&z_, &act_world_, buff);
+	writeNodes(&z_, &act_world_, buff, &std_param);
 
 	zblock_close(&z_);	
 
@@ -256,7 +258,7 @@ int main(int argc, char ** argv)
 	//get_out_fname(&act_world_.out_path, select_out, out_file, "_way_20.osm.gz");
 	char * fname_way = get_fname(&std_param, DIR_OUT, F_WAY);
 	printf("open for writing: %s ", fname_way);
-	writeWays(&z_, &act_world_, fname_way);
+	writeWays(&z_, &act_world_, fname_way, &std_param);
 
 	zblock_close(&z_);
 
@@ -282,7 +284,7 @@ int main(int argc, char ** argv)
 	//get_out_fname(&act_world_.out_path, select_out, out_file, "_rel_20.osm.gz");
 	char * fname_rel = get_fname(&std_param, DIR_OUT, F_REL);
 	printf("open for writing: %s ", fname_rel);
-	writeRelations(&z_, &act_world_, fname_rel);
+	writeRelations(&z_, &act_world_, fname_rel, &std_param);
 
 	zblock_close(&z_);
 
@@ -316,7 +318,7 @@ int main(int argc, char ** argv)
 			return -1;
 		}
 
-		readNodes(&z_, &act_world_, 1);
+		readNodes(&z_, &act_world_, 1, &std_param);
 
 		printf(" done\n");
 
@@ -349,7 +351,7 @@ int main(int argc, char ** argv)
 
 		act_world_.out_path = get_fname(&std_param, DIR_OUT, F_NODE);
 
-		writeNodes(&z_, &act_world_, buff);
+		writeNodes(&z_, &act_world_, buff, &std_param);
 
 		zblock_close(&z_);
 

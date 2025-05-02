@@ -35,6 +35,7 @@
 
 #include "../common/zblock_io.h"
 #include "../common/osm_info.h"
+#include "../common/std_param.h"
 
 #include <stdint.h> 
 
@@ -137,6 +138,11 @@ typedef struct
 
 	uint64_t * member_ref_list;
 
+	// save size
+	uint64_t count_node;
+	uint64_t count_way;
+	uint64_t count_rel;
+
 	//Rel_t * rel;
 
 	char * out_path;
@@ -237,12 +243,12 @@ typedef struct
 uint64_t get_node_lat(uint8_t * nodes, uint8_t n_size, uint64_t id);
 uint32_t get_node_lon(uint8_t * nodes, uint8_t n_size, uint64_t id);*/
 
-int readNodes(z_block * z_read, World_t * act_world, int mode);
-int readWays(z_block * z_read, World_t * act_world);
-int readRelations(z_block * z_read, World_t * act_world);
-int writeWays(z_block * z_read, World_t * act_world, char * w_fname);
-int writeNodes(z_block * z_read, World_t * act_world, char * p_fname);
-int writeRelations(z_block * z_read, World_t * act_world, char * w_fname);
+int readNodes(z_block * z_read, World_t * act_world, int mode, StdParam * param);
+int readWays(z_block * z_read, World_t * act_world, StdParam * param);
+int readRelations(z_block * z_read, World_t * act_world, StdParam * param);
+int writeWays(z_block * z_read, World_t * act_world, char * w_fname, StdParam * param);
+int writeNodes(z_block * z_read, World_t * act_world, char * p_fname, StdParam * param);
+int writeRelations(z_block * z_read, World_t * act_world, char * w_fname, StdParam * param);
 
 #endif // _OSM_CUT_H
 
