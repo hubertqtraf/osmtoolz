@@ -127,10 +127,6 @@ int init_world_way(World_t * w_ref)
 	w_ref->max_ref_count = 0;
 	w_ref->act_member_idx = 0;
 
-	// TODO: set the number of id-bytes from 8 to 5
-	// check here...
-	printf(">>>> %i %ld %ld\n", w_ref->size_way, w_ref->size_way * w_ref->info.way.count, w_ref->info.way.count);
-	//exit(0);
 	if((w_ref->ways = (uint8_t*)malloc(w_ref->size_way * w_ref->info.way.count)) == NULL)
 	{
 		fprintf(stderr,

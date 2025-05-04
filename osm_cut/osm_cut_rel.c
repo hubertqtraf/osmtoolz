@@ -529,8 +529,8 @@ int readRelations(z_block * z_read, World_t * act_world, StdParam * param)
 
 	if(act_world->test_member > act_world->info.rel.member)
 	{
-		printf("Warning: test %li is greater as %li\n", 
-			act_world->test_member, act_world->info.rel.member);
+		//printf("Warning: test %li is greater as %li\n", 
+		//	act_world->test_member, act_world->info.rel.member);
 		free(act_world->member_ref_list);
 		if((act_world->member_ref_list = (uint64_t*)malloc(sizeof(uint64_t*) * 
 						act_world->test_member)) == NULL)

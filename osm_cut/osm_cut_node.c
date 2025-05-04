@@ -288,7 +288,7 @@ int readNodes(z_block * z_read, World_t * act_world, int mode, StdParam * param)
 
 	sax_init(&sax, 0);
 	init_world_ref(act_world, mode);
-	printf("I %s %i, after init_world_ref\n", __FILE__, __LINE__);
+	//printf("I %s %i, after init_world_ref\n", __FILE__, __LINE__);
 	node_count_init_06(&sax);
 
 	sax_set_data_ref(&sax, act_world);
