@@ -111,6 +111,26 @@ void init_world_ref_x(World_t * w_ref/*, int32_t rect[4]*/)
 
 int mark_node(World_t * world, uint64_t node_ref, int next)
 {
+	if(world->mem_mode == MODE_MAX_ID)
+	{
+		//printf("%li %x\n", node_ref, world->node_flags[node_ref]);
+		if(node_ref & 1)
+		{
+			if(world->node_flags[node_ref >> 1] & 0x20)
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			if(world->node_flags[node_ref >> 1] & 0x02)
+			{
+				return 0;
+			}
+		}
+		return -1;
+	}
+
 	int64_t pos = findNode(world->node_flags, world->node_flags_size, //world->size_node,
 		world->info.node.count, node_ref);
 	//printf("[%ld %ld]\n", node_ref, pos);

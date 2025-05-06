@@ -86,9 +86,21 @@ int createNodeFlagList(World_t * w_ref)
 		free(w_ref->node_flags);
 		w_ref->node_flags = NULL;
 	}
-	if((w_ref->node_flags = (uint8_t *)malloc(sizeof(uint8_t) * (w_ref->info.node.count * w_ref->node_flags_size))) == NULL)
-		return -1;
-	memset(w_ref->node_flags, 0x00, sizeof(uint8_t) * (w_ref->info.node.count * w_ref->node_flags_size /* >> 3*/));
+	if(w_ref->mem_mode == MODE_BLOCK)
+	{
+		if((w_ref->node_flags = (uint8_t *)malloc(sizeof(uint8_t) *
+			(w_ref->info.node.count * w_ref->node_flags_size))) == NULL)
+			return -1;
+		memset(w_ref->node_flags, 0x00, sizeof(uint8_t) *
+			(w_ref->info.node.count * w_ref->node_flags_size /* >> 3*/));
+	}
+	else
+	{
+		if((w_ref->node_flags = (uint8_t *)malloc((sizeof(uint8_t) *
+			(w_ref->info.node.max_id >> 1))+1)) == NULL)
+			return -1;
+		memset(w_ref->node_flags, 0x00, (sizeof(uint8_t) * (w_ref->info.node.max_id >> 1)) + 1);
+	}
 	return 0;
 }
 
@@ -102,6 +114,14 @@ int checkSize(World_t * w_ref)
 {
 	int ret = 0;
 	uint64_t id_40 = w_ref->nd_id;
+
+	if(w_ref->mem_mode == MODE_MAX_ID)
+	{
+		if(w_ref->nd_id & 1)
+			w_ref->node_flags[w_ref->nd_id >> 1] |= 0x10;
+		else
+			w_ref->node_flags[w_ref->nd_id >> 1] |= 0x01;
+	}
 
 	if((w_ref->nd_lat > 399) || (w_ref->nd_lon > 399))
 	{
@@ -123,7 +143,18 @@ int checkSize(World_t * w_ref)
 		}
 		else	// > 4
 		{
-			id_40 |= ID_40_FLAG;
+			if(w_ref->mem_mode == MODE_MAX_ID)
+			{
+				//printf("%ld\n", w_ref->nd_id);
+				if(w_ref->nd_id & 1)
+					w_ref->node_flags[w_ref->nd_id >> 1] |= 0x20;
+				else
+					w_ref->node_flags[w_ref->nd_id >> 1] |= 0x02;
+			}
+			else
+			{
+				id_40 |= ID_40_FLAG;
+			}
 			/*memcpy(w_ref->node_flags + (w_ref->act_idx * w_ref->node_flags_size),
 					&id_40, w_ref->node_flags_size);
 			printf("checkSize %ld %ld\n", w_ref->nd_id, id_40);*/
@@ -138,7 +169,7 @@ int checkSize(World_t * w_ref)
 		printf("value is '0'!\n");
 		return (-1);
 	}
-	if(w_ref->node_flags_size == 5)
+	if((w_ref->node_flags_size == 5) && (w_ref->mem_mode != MODE_MAX_ID))
 	{
 		memcpy(w_ref->node_flags + (w_ref->act_idx * w_ref->node_flags_size),
 				&id_40, w_ref->node_flags_size);

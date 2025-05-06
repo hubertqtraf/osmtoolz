@@ -67,6 +67,9 @@
 
 #define ID_40_FLAG  0x0000004000000000
 
+#define MODE_MAX_ID 0
+#define MODE_BLOCK  1
+
 // TODO check
 #define STORE_COOR_24BIT     0x01
 #define STORE_COOR_32BIT     0x02
@@ -98,6 +101,8 @@ typedef struct
 	uint64_t count_node;
 	uint64_t count_way;
 
+	uint8_t mem_mode;
+
 	char save_tag[10];
 
 	char lat_buf[100];
@@ -123,6 +128,7 @@ typedef struct
 	double select_rect[4];
 
 	uint64_t next_id;
+	uint64_t max_id;
 
 	char * in_path;
 	char * out_path;

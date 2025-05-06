@@ -41,6 +41,8 @@
 
 void init_write_world_node(World_t * w_ref)
 {
+	w_ref->max_id = w_ref->info.node.max_id;
+
 	w_ref->type_flags = 0x00;
 	w_ref->key_flags = 0x00;
 	w_ref->val_flags = 0x00;
@@ -57,6 +59,28 @@ void init_write_world_node(World_t * w_ref)
 	w_ref->next_id = 0;
 }
 
+uint64_t getNextID(World_t * w_ref)
+{
+	do
+	{
+		w_ref->next_id++;
+		//if(w_ref->node_flags[w_ref->next_id >> 1])
+		//	printf("vvv %ld %x\n", w_ref->next_id, w_ref->node_flags[w_ref->next_id >> 1]);
+		if(w_ref->next_id & 1)
+		{
+			if((w_ref->node_flags[w_ref->next_id >> 1] & 0x10) == 0x10)
+				return 1;
+		}
+		else
+		{
+			if((w_ref->node_flags[w_ref->next_id >> 1] & 0x01) == 0x01)
+				return 1;
+		}
+	}
+	while(w_ref->next_id <= w_ref->max_id);
+	return 0;
+}
+
 int inline checkNodeFlag(World_t * world)
 {
 	// TODO: add mode '5'
@@ -70,9 +94,29 @@ int inline checkNodeFlag(World_t * world)
 		}
 		break;
 	case 5:
-		if(get_node_flags2(world->node_flags, world->node_flags_size, world->act_idx))
+		if(world->mem_mode == MODE_MAX_ID)
 		{
-			return 1;
+			if(world->next_id <= world->max_id)
+			{
+				//printf("## %x\n", world->node_flags[world->next_id >> 1]);
+				if(world->next_id & 1)
+				{
+					if((world->node_flags[world->next_id >> 1] & 0x30) == 0x30)
+						return 1;
+				}
+				else
+				{
+					if((world->node_flags[world->next_id >> 1] & 0x03) == 0x03)
+						return 1;
+				}
+			}
+		}
+		else
+		{
+			if(get_node_flags2(world->node_flags, world->node_flags_size, world->act_idx))
+			{
+				return 1;
+			}
 		}
 		//printf("TODO! (%x) ",get_node_flags2(world->node_flags, world->node_flags_size, world->act_idx));
 		break;
@@ -139,7 +183,6 @@ int write_node_tag_close(struct _simple_sax * sax)
 
 int write_node_tag_name(struct _simple_sax * sax)
 {
-
 	if(sax->tag_start)
 	{
 		World_t * world_ = (World_t *)sax->d_ref;
@@ -163,6 +206,8 @@ int write_node_tag_name(struct _simple_sax * sax)
 						sax->tag_name_start,world_->id);
 				}
 				world_->type_flags = INSIDE_NODE;
+				if((world_->mem_mode == MODE_MAX_ID) && (world_->node_flags_size == 5))
+					getNextID(world_);
 				//printf("nd;");
 			}
 			break;

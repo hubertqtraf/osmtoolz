@@ -114,14 +114,31 @@ int main(int argc, char ** argv)
 	z_block z_;
 	zblock_new(&z_, ZB_READ);
 
+	if(!std_param.val_mode)
+		std_param.val_mode = 1;
+	setMode(&act_world_, std_param.val_mode);
+
+	if(std_param.val_verbose)
+	{
+		printf("1: %li \n", act_world_.info.node.count);
+		printf("5: %li (%li)\n", act_world_.info.node.count * 5, act_world_.info.node.count);
+		printf("X: %li \n", act_world_.info.node.max_id);
+	}
+	if((act_world_.info.node.count * 6) > act_world_.info.node.max_id)
+	{
+		printf("A: %ld\n", act_world_.info.node.max_id);
+		act_world_.mem_mode = MODE_MAX_ID;	// max id mode
+	}
+	else
+	{
+		printf("B: %ld\n", act_world_.info.node.count * 5);
+		act_world_.mem_mode = MODE_BLOCK;	// count mode, without gaps
+	}
+	//act_world_.mem_mode = MODE_MAX_ID;
 	if(openOsmInFile(&std_param, &z_, F_NODE))
 	{
 		return -1;
 	}
-
-	if(!std_param.val_mode)
-		std_param.val_mode = 1;
-	setMode(&act_world_, std_param.val_mode);
 	int ret = readNodes(&z_, &act_world_, &std_param); //std_param.rect);
 
 	if(std_param.val_verbose)
