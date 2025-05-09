@@ -101,12 +101,12 @@ int inline checkNodeFlag(World_t * world)
 				//printf("## %x\n", world->node_flags[world->next_id >> 1]);
 				if(world->next_id & 1)
 				{
-					if((world->node_flags[world->next_id >> 1] & 0x30) == 0x30)
+					if((world->node_flags[world->next_id >> 1] & 0x70) == 0x70)
 						return 1;
 				}
 				else
 				{
-					if((world->node_flags[world->next_id >> 1] & 0x03) == 0x03)
+					if((world->node_flags[world->next_id >> 1] & 0x07) == 0x07)
 						return 1;
 				}
 			}

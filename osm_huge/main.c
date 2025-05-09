@@ -134,7 +134,7 @@ int main(int argc, char ** argv)
 		printf("B: %ld\n", act_world_.info.node.count * 5);
 		act_world_.mem_mode = MODE_BLOCK;	// count mode, without gaps
 	}
-	//act_world_.mem_mode = MODE_MAX_ID;
+	act_world_.mem_mode = MODE_MAX_ID;
 	if(openOsmInFile(&std_param, &z_, F_NODE))
 	{
 		return -1;

@@ -42,6 +42,9 @@
 
 // TODO: use a copy in ../osm_nodes?
 
+int key = 0;
+int val = 0;
+
 void init_world_ref_x(World_t * w_ref/*, int32_t rect[4]*/)
 {
 	w_ref->act_idx = 0;
@@ -118,6 +121,8 @@ int mark_node(World_t * world, uint64_t node_ref, int next)
 		{
 			if(world->node_flags[node_ref >> 1] & 0x20)
 			{
+				if(val == 1)
+					world->node_flags[node_ref >> 1] |= 0x40;
 				return 0;
 			}
 		}
@@ -125,6 +130,8 @@ int mark_node(World_t * world, uint64_t node_ref, int next)
 		{
 			if(world->node_flags[node_ref >> 1] & 0x02)
 			{
+				if(val == 1)
+					world->node_flags[node_ref >> 1] |= 0x04;
 				return 0;
 			}
 		}
@@ -165,7 +172,10 @@ int close_way(World_t * world)
 	}
 	if(valid == 1)
 	{
-		world->way_flags[world->act_idx] = 1;
+		if(val)
+			world->way_flags[world->act_idx] = 1;
+		else
+			world->way_flags[world->act_idx] = 0;
 	}
 	else
 	{
@@ -175,6 +185,7 @@ int close_way(World_t * world)
 	world->act_member_idx = 0;
 
 	world->act_idx++;
+	val = 0;
 	return 0;
 }
 
@@ -275,7 +286,6 @@ int load_way_tag_name(struct _simple_sax * sax)
 			}
 			break;
 
-
 		default:
 			break;
 		}
@@ -375,6 +385,27 @@ int load_way_arg_end(struct _simple_sax * sax)
 					//printf("y %s %li\n", sax->tag_start, world_->act_way.id);
 					world_->key_flags &= ~(WAY_ID);
 				}
+			}
+			if(world_->key_flags == WAY_K)
+			{
+				if(!strcmp((const char*) sax->tag_start, "highway"))
+				{
+					key = 1;
+				}
+				world_->key_flags  &= ~(WAY_K);
+			}
+			if(world_->key_flags == WAY_V)
+			{
+				if(!strncmp((const char*) sax->tag_start, "motorway", 8))
+				{
+					if(key == 1)
+					{
+						val = 1;
+						//printf("val %s\n", sax->tag_start);
+					}
+				}
+				key = 0;
+				world_->key_flags  &= ~(WAY_V);
 			}
 		}
 	}
