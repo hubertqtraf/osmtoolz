@@ -42,6 +42,10 @@
 *.idb
 *.pdb
 
+*.osm.gz
+*.osminfo.gz
+*.osm
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
