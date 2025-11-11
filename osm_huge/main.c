@@ -114,8 +114,9 @@ int main(int argc, char ** argv)
 	z_block z_;
 	zblock_new(&z_, ZB_READ);
 
+	// set '5' as drfault
 	if(!std_param.val_mode)
-		std_param.val_mode = 1;
+		std_param.val_mode = 5;
 	setMode(&act_world_, std_param.val_mode);
 
 	if(std_param.val_verbose)

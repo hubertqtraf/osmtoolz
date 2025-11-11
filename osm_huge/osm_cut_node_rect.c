@@ -97,9 +97,9 @@ int createNodeFlagList(World_t * w_ref)
 	else
 	{
 		if((w_ref->node_flags = (uint8_t *)malloc((sizeof(uint8_t) *
-			(w_ref->info.node.max_id >> 1))+1)) == NULL)
+			w_ref->info.node.max_id )+1)) == NULL)
 			return -1;
-		memset(w_ref->node_flags, 0x00, (sizeof(uint8_t) * (w_ref->info.node.max_id >> 1)) + 1);
+		memset(w_ref->node_flags, 0x00, (sizeof(uint8_t) * w_ref->info.node.max_id) + 1);
 	}
 	return 0;
 }
