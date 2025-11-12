@@ -65,10 +65,10 @@ typedef struct
 	uint32_t flags;
 	int32_t rect[4];
 	uint8_t val_thread;
-	uint8_t val_accept;
-	uint8_t val_mode;
-	uint8_t val_point;
-	uint8_t val_verbose;
+	uint8_t val_accept;	// 'a'	PARM_ACC
+	uint8_t val_mode;	// 'm'	PARM_MODE
+	uint8_t val_point;	// 'p'	PARM_PT
+	uint8_t val_verbose;	// 'v'	PARM_VERB
 	char * in_fname;
 	char * out_fname;
 	char * buff;

@@ -198,9 +198,10 @@ void printProgress(StdParam * param, char * start, uint64_t count)
 		return;
 	if(param->val_verbose == 0)
 		return;
-
+	if(!param->max_size)
+		return;
 	float progress = (float) count / param->max_size;
-	int bar_length = progress * param->bar_width;
+	unsigned int bar_length = progress * param->bar_width;
 
 	printf("\r%s: [", start);
 	for(int i = 0; i < bar_length; ++i)
