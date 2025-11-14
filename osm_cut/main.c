@@ -306,7 +306,9 @@ int main(int argc, char ** argv)
 
 	// TODO: fix the coping the infos values
 	//printf("count_points: %li\n", count_points);
-	if(count_points != 0)
+	// TODO: point mode is removed; rework to activate this mode
+	if(0)
+	//if(count_points != 0)
 	{
 		act_world_.info.point.count = count_points;
 		uint64_t node_count = act_world_.info.node.count;

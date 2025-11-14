@@ -78,7 +78,9 @@ void inline append_node_part(World_t * world, uint64_t flags, const char * text,
 	{
 		if(flags & ND_COOR_FLAG)
 		{
-			zblock_wr_append(&world->zw_point_out, text, size);
+			// TODO: point mode is removed; rework to activate this mode
+			//zblock_wr_append(&world->zw_point_out, text, size);
+			zblock_wr_append(&world->zw_out, text, size);
 		}
 	}
 }
@@ -255,7 +257,9 @@ int write_node_arg_end(struct _simple_sax * sax)
 					if(check_node(world_) & ND_COOR_FLAG)
 					{
 						uint64_t act_id = atol((const char *)sax->tag_start);
-						updateInfoPart(&world_->info.point, act_id);
+						updateInfoPart(&world_->info.node, act_id);
+						// TODO: point mode is removed; rework to activate this mode
+						//updateInfoPart(&world_->info.point, act_id);
 					}
 				}
 			}
@@ -295,8 +299,9 @@ int writeNodes(z_block * z_read, World_t * act_world, char * p_fname, StdParam *
 
 	if(createOsmHead(&act_world->zw_out, act_world->out_path, ZB_WRITE))
 		return -1;
-	if(createOsmHead(&act_world->zw_point_out, p_fname, ZB_WRITE))
-		return -1;
+	// TODO: point mode is removed; rework to activate this mode
+	//f(createOsmHead(&act_world->zw_point_out, p_fname, ZB_WRITE))
+	//	return -1;
 	//printf("out files:  %s %s\n", act_world->out_path, p_fname);
 
 	param->max_size = act_world->count_node;
@@ -327,8 +332,9 @@ int writeNodes(z_block * z_read, World_t * act_world, char * p_fname, StdParam *
 
 	if(closeOsm(&act_world->zw_out))
 		return -1;
-	if(closeOsm(&act_world->zw_point_out))
-		return -1;
+	// TODO: point mode is removed; rework to activate this mode
+	//if(closeOsm(&act_world->zw_point_out))
+	//	return -1;
 
 	sax_cleanup(&sax);
 
