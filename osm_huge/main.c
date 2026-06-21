@@ -8,7 +8,7 @@
  *
  * beginning:   04.2025
  *
- * (C)          Schmid Hubert 2025-2025
+ * (C)          Schmid Hubert 2025-2026
  *
  * history:
  *
@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
 
 	if(argc < 3)
 	{
-		printf("usage: osm_huge -f <xxx.osm.gz> [-o <output>] [-m 1] [-t 1] [-a 1]\n");
+		printf("usage: osm_huge -f <*.osminfo.gz> -r <w1,w2,h1,h2> [-o <output>] [-n <1>]\n");
 		exit(-1);
 	}
 	memset(&act_world_, 0x00, sizeof(World_t));
@@ -81,7 +81,6 @@ int main(int argc, char ** argv)
 		printf("rect: %i %i %i %i\n", std_param.rect[0],
 			std_param.rect[1], std_param.rect[2], std_param.rect[3]);
 	}
-	addBox(&source_version.box, std_param.rect);
 	initOsmInfo(&(act_world_.info));
 	if(readOsmInfo(&(act_world_.info), fname, &source_version, 0))
 	{
@@ -94,6 +93,7 @@ int main(int argc, char ** argv)
 		printf("error opening gz-file [%s]\n",argv[1]);
 		return -1;
 	}
+	addBox(&source_version.box, std_param.rect);
 	if(std_param.val_verbose)
 	{
 		printf("\nIN  [%s]\n", get_fname(&std_param, DIR_IN, F_NODE));
